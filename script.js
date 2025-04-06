@@ -1,13 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
     const BOARD_SIZE = 15;
     const EMPTY = 0;
-    const PLAYER = 1;
-    const AI = 2;
+    const BLACK = 1;
+    const WHITE = 2;
+    
+    // 默认玩家是黑子，AI是白子
+    let PLAYER = BLACK;
+    let AI = WHITE;
     
     const statusElement = document.getElementById('status');
     const boardElement = document.getElementById('board');
     const restartButton = document.getElementById('restart');
     const undoButton = document.getElementById('undo');
+    const playerColorSelect = document.getElementById('player-color');
     
     let gameBoard = [];
     let gameOver = false;
@@ -22,6 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
         moveHistory = [];
         boardElement.innerHTML = '';
         
+        // 设置玩家和AI的棋子颜色
+        setPlayerColor(playerColorSelect.value);
+        
         // 创建棋盘格子
         for (let i = 0; i < BOARD_SIZE; i++) {
             for (let j = 0; j < BOARD_SIZE; j++) {
@@ -34,8 +42,37 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
-        statusElement.textContent = '轮到你下棋（黑子）';
+        updateStatusText();
         updateUndoButton();
+        
+        // 如果玩家选择白子（后手），则AI先行
+        if (PLAYER === WHITE) {
+            makeAIMove();
+        }
+    }
+    
+    // 设置玩家棋子颜色
+    function setPlayerColor(color) {
+        if (color === 'black') {
+            PLAYER = BLACK;
+            AI = WHITE;
+        } else {
+            PLAYER = WHITE;
+            AI = BLACK;
+        }
+    }
+    
+    // 更新状态文本
+    function updateStatusText() {
+        const playerColorText = PLAYER === BLACK ? '黑子' : '白子';
+        if (gameOver) {
+            // 已有游戏结束文本，不更新
+            return;
+        } else if (waitingForAI) {
+            statusElement.textContent = 'AI思考中...';
+        } else {
+            statusElement.textContent = `轮到你下棋（${playerColorText}）`;
+        }
     }
     
     // 更新悔棋按钮状态
@@ -83,9 +120,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         // AI落子
+        makeAIMove();
+    }
+    
+    // AI落子
+    function makeAIMove() {
         waitingForAI = true;
         updateUndoButton();
-        statusElement.textContent = 'AI思考中...';
+        updateStatusText();
         
         setTimeout(() => {
             const aiMove = findBestMove();
@@ -118,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             waitingForAI = false;
             updateUndoButton();
-            statusElement.textContent = '轮到你下棋（黑子）';
+            updateStatusText();
         }, 500);
     }
     
@@ -147,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 更新状态
         gameOver = false;
-        statusElement.textContent = '悔棋成功，轮到你下棋（黑子）';
+        updateStatusText();
         updateUndoButton();
     }
     
@@ -192,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const cell = cells[index];
         
         const piece = document.createElement('div');
-        piece.className = `piece ${player === PLAYER ? 'black' : 'white'}`;
+        piece.className = `piece ${player === BLACK ? 'black' : 'white'}`;
         cell.appendChild(piece);
     }
     
@@ -506,6 +548,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 悔棋按钮
     undoButton.addEventListener('click', handleUndo);
+    
+    // 颜色选择变更监听
+    playerColorSelect.addEventListener('change', () => {
+        // 重新开始游戏以应用新的颜色选择
+        initGame();
+    });
     
     // 初始化游戏
     initGame();
