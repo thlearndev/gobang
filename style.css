@@ -1,0 +1,271 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Microsoft YaHei', sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    color: #333;
+    overflow: hidden;
+}
+
+.container {
+    width: 100%;
+    max-width: 750px;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    display: flex;
+    flex-direction: column;
+    height: 98vh;
+    max-height: 840px;
+}
+
+h1 {
+    margin-bottom: 15px;
+    color: #2c3e50;
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.game-info {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+}
+
+#status {
+    font-size: 16px;
+    font-weight: bold;
+    color: #e67e22;
+    background-color: rgba(230, 126, 34, 0.1);
+    padding: 8px 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    flex: 1;
+    text-align: left;
+}
+
+.buttons {
+    display: flex;
+    gap: 10px;
+}
+
+button {
+    padding: 8px 16px;
+    background: linear-gradient(to right, #4CAF50, #2ecc71);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(46, 204, 113, 0.2);
+    white-space: nowrap;
+}
+
+button:hover:not(:disabled) {
+    background: linear-gradient(to right, #45a049, #27ae60);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(46, 204, 113, 0.3);
+}
+
+button:active:not(:disabled) {
+    transform: translateY(1px);
+}
+
+button:disabled {
+    background: linear-gradient(to right, #a5a5a5, #7a7a7a);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+#undo {
+    background: linear-gradient(to right, #3498db, #2980b9);
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.2);
+}
+
+#undo:hover:not(:disabled) {
+    background: linear-gradient(to right, #2980b9, #2471a3);
+    box-shadow: 0 6px 12px rgba(52, 152, 219, 0.3);
+}
+
+.board-container {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+    overflow: hidden;
+    perspective: 1000px;
+}
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(15, minmax(30px, 38px));
+    grid-template-rows: repeat(15, minmax(30px, 38px));
+    background: linear-gradient(135deg, #e9c476 0%, #e9bb7d 100%);
+    border: 3px solid #7d4c16;
+    border-radius: 5px;
+    box-shadow: 0 15px 35px rgba(125, 76, 22, 0.3);
+    transform: rotateX(0deg);
+    transition: all 0.5s ease;
+    align-self: center;
+}
+
+/* 移除了棋盘的hover效果 */
+
+.cell {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.cell:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.cell::before, .cell::after {
+    content: '';
+    position: absolute;
+    background-color: rgba(125, 76, 22, 0.8);
+    transition: all 0.2s ease;
+}
+
+.cell::before {
+    width: 100%;
+    height: 1px;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+}
+
+.cell::after {
+    width: 1px;
+    height: 100%;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+}
+
+.piece {
+    position: absolute;
+    width: 90%;
+    height: 90%;
+    border-radius: 50%;
+    z-index: 1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    opacity: 0.95;
+}
+
+.piece:hover {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+
+.black {
+    background: radial-gradient(circle at 30% 30%, #666, #000);
+    box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.2), 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.white {
+    background: radial-gradient(circle at 30% 30%, #fff, #ccc);
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.last-move {
+    box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 15px 10px;
+        height: 95vh;
+        max-height: none;
+        padding-top: 25px; /* 增加顶部内边距，让内容下移 */
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+    
+    .game-info {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+    
+    #status {
+        text-align: center;
+        font-size: 14px;
+    }
+    
+    #board {
+        grid-template-columns: repeat(15, minmax(20px, 25px));
+        grid-template-rows: repeat(15, minmax(20px, 25px));
+        transform: rotateX(0);
+    }
+    
+    .buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    button {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+}
+
+/* 针对更小的手机屏幕 */
+@media (max-width: 400px) {
+    .container {
+        padding: 10px 5px;
+        padding-top: 30px; /* 在更小的屏幕上增加更多顶部内边距 */
+    }
+    
+    h1 {
+        font-size: 1.3rem;
+        margin-bottom: 8px;
+    }
+    
+    #status {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+    
+    #board {
+        grid-template-columns: repeat(15, minmax(16px, 20px));
+        grid-template-rows: repeat(15, minmax(16px, 20px));
+    }
+    
+    .piece {
+        width: 95%;
+        height: 95%;
+    }
+    
+    button {
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+}
